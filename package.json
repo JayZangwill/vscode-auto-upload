@@ -79,6 +79,10 @@
 		"typescript": "^3.8.3",
 		"vscode-test": "^1.4.0"
 	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/JayZangwill/vscode-auto-upload"
+	},
 	"dependencies": {
 		"clipboardy": "^2.3.0",
 		"qiniu": "^7.3.2"
