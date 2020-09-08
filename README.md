@@ -16,16 +16,13 @@ mac需要选中文件按`command+option+c`即可复制文件路径
 
 复制文件路径完毕后到编辑器中按下`ctrl+alt+v`(mac为`command+alt+v`)即可得到拼接好的cdn地址
 
-普通使用示例：
 
 <details>
-  <summary>Uploading an image from clipboard</summary>
-  <img src="./img/guide.gif" alt="clipboard.gif">
+  <summary>普通使用示例：</summary>
+  <img src="https://github.com/JayZangwill/vscode-auto-upload/raw/master/img/guide.gif" alt="clipboard.gif">
 </details>
 
-多张图片上传示例：
-
 <details>
-  <summary>Uploading an image from clipboard</summary>
-  <img src="./img/guide1.gif" alt="clipboard.gif">
+  <summary>多张图片上传示例：</summary>
+  <img src="https://github.com/JayZangwill/vscode-auto-upload/raw/master/img/guide1.gif" alt="clipboard.gif">
 </details>
