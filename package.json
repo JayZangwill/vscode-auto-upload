@@ -2,7 +2,7 @@
 	"name": "auto-upload",
 	"displayName": "auto-upload",
 	"description": "复制文件路径后，粘贴到编辑器里会自动上传到七牛云并替换成远程连接",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"publisher": "JayZangwill",
 	"engines": {
 		"vscode": "^1.48.0"
