@@ -2,12 +2,12 @@ const vscode = require("vscode");
 const clipboardy = require('clipboardy');
 const fs = require('fs');
 const request = require("./utils/request");
-const upload = require("./utils/upload");
+const uploader = require("./utils/upload");
 let uploading = false;
 
 function activate(context) {
   const disposable = vscode.commands.registerCommand("auto-upload.upload", () => {
-    main();
+    check() && main();
   });
 
   context.subscriptions.push(disposable);
@@ -24,57 +24,89 @@ module.exports = {
   deactivate
 };
 
-async function main() {
+function check() {
   if (uploading) {
     vscode.window.showInformationMessage("有图片上传中");
-    return;
+    return false;
   }
   // 获取当前编辑文件
   const editor = vscode.window.activeTextEditor;
-  if (!editor) return;
+  if (!editor) return false;
 
   const fileUri = editor.document.uri;
-  if (!fileUri) return;
+  if (!fileUri) return false;
 
   if (fileUri.scheme === "untitled") {
     vscode.window.showErrorMessage("请保存文件");
-    return;
+    return false;
   }
-  
-  const imagePath = clipboardy.readSync().replace(/"/g, '');
-  const ext = imagePath.split('.')[1];
 
-  if (!(/a?png|jpe?g|gif|svga?|webp/.test(ext))) {
-    vscode.window.showErrorMessage('请复制正确的图片路径');
-    return;
+  return true;
+}
+
+async function main() {
+  const imagePaths = clipboardy.readSync().replace(/"/g, '').split('\n');
+
+  for (let i = 0; i < imagePaths.length; i++) {
+    const imagePath = imagePaths[i];
+    const ext = imagePath.split('.')[1];
+
+    if (!(/a?png|jpe?g|gif|svga?|webp/.test(ext)) || /^(https?)/.test(imagePath)) {
+      vscode.window.showErrorMessage('请复制正确的图片路径');
+      return;
+    }
+
+    imagePaths[i] = imagePath.trim();
   }
-  
-  if (fs.existsSync(imagePath)) {
-    uploading = true;
 
-    request({
-      funcPoint: 'oss',
-    }).then(({ data }) => {
-      const imageFileName = data.token.slice(0,8) + '.' + ext;
-      
-      upload({
+  const uploaderPromises = [];
+
+  // 开始上传
+  uploading = true;
+
+  const { data } = await request({
+    funcPoint: 'oss',
+  })
+
+  for (let i = 0; i < imagePaths.length; i++) {
+    const imagePath = imagePaths[i];
+    const ext = imagePath.split('.')[1];
+
+    if (!fs.existsSync(imagePath)) {
+      continue;
+    }
+
+    const imageFileName = data.token.split(':')[1].slice(0,8) + ('' + +new Date).slice(-4) + '.' + ext;
+    const p = new Promise((resolve, reject) => {
+      uploader({
         uploadToken: data.token,
         fileName: imageFileName,
         path: imagePath
-      })
-        .then(() => {
-          vscode.window.showInformationMessage("上传成功");
-          editor.edit((textEditorEdit) => {
-            textEditorEdit.replace(editor.selection, data.domain + imageFileName);
-          });
-        })
-        .catch(err => {
-          vscode.window.showErrorMessage(err);
-        }).finally(() => {
-          uploading = false;
-        });
-    }).catch(() => {
-      uploading = false;
-    })
+      }).then(() => {
+        resolve(data.domain + imageFileName);
+      }).catch(err => {
+        reject(err);
+      });
+    });
+      
+    uploaderPromises[i] = p;
   }
+
+  Promise.all(uploaderPromises).then(results => {
+    const resultsLen = results.length;
+    const editor = vscode.window.activeTextEditor;
+
+    vscode.window.showInformationMessage("上传成功");
+
+    editor.edit(textEditorEdit => {
+      // 将上传结果拼接到光标处，如果图片大于光标数，则全部拼接到最后一个光标处;如果光标数大于图片数则不处理
+      editor.selections.forEach((selection, i) => {
+        resultsLen > i && textEditorEdit.replace(selection, i === editor.selections.length - 1 ? results.join('\n') : results.shift());
+      });
+    });
+  }).catch(err => {
+    vscode.window.showErrorMessage(err);
+  }).finally(() => {
+    uploading = false;
+  });
 }
