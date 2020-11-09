@@ -67,10 +67,10 @@
   resolved "http://npm.zmops.cc/@types%2fnode/-/node-14.6.2.tgz#264b44c5a28dfa80198fc2f7b6d3c8a054b9491f"
   integrity sha1-JktExaKN+oAZj8L3ttPIoFS5SR8=
 
-"@types/vscode@^1.48.0":
-  version "1.48.0"
-  resolved "http://npm.zmops.cc/@types%2fvscode/-/vscode-1.48.0.tgz#c1841ccf80086d53b35a9d7f2eb3b4d949bd2d2f"
-  integrity sha1-wYQcz4AIbVOzWp1/LrO02Um9LS8=
+"@types/vscode@1.40.0":
+  version "1.40.0"
+  resolved "http://npm.zmops.cc/@types%2fvscode/-/vscode-1.40.0.tgz#47d19e9e32da512c986f579fe6afbc8d3e6e0c55"
+  integrity sha1-R9GenjLaUSyYb1ef5q+8jT5uDFU=
 
 acorn-jsx@^5.2.0:
   version "5.2.0"
