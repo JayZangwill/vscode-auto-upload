@@ -26,3 +26,5 @@ mac需要选中文件按`command+option+c`即可复制文件路径
   <summary>多张图片上传示例：</summary>
   <img src="https://github.com/JayZangwill/vscode-auto-upload/raw/master/img/guide1.gif" alt="clipboard.gif">
 </details>
+
+如果想再复制一遍上次生成的路径，直接可以在编辑器中按下`ctrl+v`(mac为`command+v`)即可，因为插件在每次上传完图片后会将cdn图片路径复制到剪切板里

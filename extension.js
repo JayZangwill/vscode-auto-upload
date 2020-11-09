@@ -95,8 +95,9 @@ async function main() {
   Promise.all(uploaderPromises).then(results => {
     const resultsLen = results.length;
     const editor = vscode.window.activeTextEditor;
+    clipboardy.writeSync(results.join('\n'))
 
-    vscode.window.showInformationMessage("上传成功");
+    vscode.window.showInformationMessage(/^win/.test(process.platform) ? "上传成功，可按下ctrl+v再次复制以上结果" : "上传成功，可按下command+v再次复制以上结果");
 
     editor.edit(textEditorEdit => {
       // 将上传结果拼接到光标处，如果图片大于光标数，则全部拼接到最后一个光标处;如果光标数大于图片数则不处理
